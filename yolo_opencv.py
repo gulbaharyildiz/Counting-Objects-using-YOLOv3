@@ -1,16 +1,20 @@
 import cv2
 import argparse
 import numpy as np
-
+import os
+from time import sleep
+os.system('fswebcam -r 640x480 --no-banner image.jpg')
+sleep(2)
+cv2.imread('image.jpg')
 ap = argparse.ArgumentParser()
 ap.add_argument('-i', '--image', required=True,
-                help = 'path to input image')
+                help = cv2.imread('image.jpg'))
 ap.add_argument('-c', '--config', required=True,
-                help = 'path to yolo config file')
+                help = '/home/pi/Desktop/Counting-Objects-using-YOLOv3/yolov3.cfg')
 ap.add_argument('-w', '--weights', required=True,
-                help = 'path to yolo pre-trained weights')
+                help = '/home/pi/Desktop/Counting-Objects-using-YOLOv3/yolov3-tiny.weights')
 ap.add_argument('-cl', '--classes', required=True,
-                help = 'path to text file containing class names')
+                help = '/home/pi/Desktop/Counting-Objects-using-YOLOv3/yolov3.txt')
 args = ap.parse_args()
 
 
@@ -35,11 +39,13 @@ def draw_prediction(img, class_id, confidence, x, y, x_plus_w, y_plus_h):
 
 image = cv2.imread(args.image)
 
-
 Width = image.shape[1]
 Height = image.shape[0]
 scale = 0.00392
-
+#image = cv2.imread(args["image"])
+#(Height,Width) = image.shape[:2]
+#print("width: {} pixels".format(Width))
+#print("Height: {}  pixels".format(Height))
 classes = None
 
 with open(args.classes, 'r') as f:
@@ -90,9 +96,9 @@ for i in indices:
     w = box[2]
     h = box[3]
     draw_prediction(image, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h))
-print(count)
+print('apple count:',count)
 cv2.imshow("object detection", image)
 cv2.waitKey()
     
-cv2.imwrite("O_apple-9.jpg", image)
+cv2.imwrite("O_apple.jpg", image)
 cv2.destroyAllWindows()
